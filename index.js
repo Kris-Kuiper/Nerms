@@ -175,6 +175,55 @@ module.exports = new function() {
 
 				_data.instance.models[type.name].push(_instance);
 
+				//Relations
+				if(_data.relations[type.name]) {
+
+					for(var a in _data.relations[type.name].now) {
+
+						var relation = _data.relations[type.name].now[a];
+						var ent 	 = _data.instance.models[relation.model].find[relation.on[1]](data[relation.on[0]]);
+
+						if(null !== ent) {
+
+							_instance[relation.property[0]].push(ent);
+							ent[relation.property[1]].push(_instance);
+						}
+						else {
+
+							if(undefined === _data.relations[relation.model]) {
+								_data.relations[relation.model] = {now : [], later : []};
+							}
+
+							var relation = JSON.parse(JSON.stringify(relation));
+
+							relation.value = [data[relation.on[1]], _instance];
+							_data.relations[relation.model].later.push(relation);
+						}
+					}
+
+					var remove 	 = [];
+
+					for(var a in _data.relations[type.name].later) {
+						
+						var relation = _data.relations[type.name].later[a];
+						var ent 	 = _data.instance.models[type.name].find[relation.on[1]](relation.value[0]);
+
+						if(null !== ent) {
+
+							if(_instance[relation.on[1]].get() === ent[relation.on[1]].get()) {
+
+								_instance[relation.property[1]].push(relation.value[1]);
+								relation.value[1][relation.property[0]].push(_instance);
+								remove.push(a);
+							}
+						}
+					}
+
+					for(var a in remove) {
+						_data.relations[type.name].later.splice(remove[a], 1);
+					}
+				}
+
 				return _instance;
 			};
 
@@ -264,57 +313,6 @@ module.exports = new function() {
 
 				if(entity[a] && entity[a].set) {
 					entity[a].set(objects[i][a]);
-				}
-			}
-
-			//Relations
-			if(_data.relations[type]) {
-
-				for(var a in _data.relations[type].now) {
-
-					var relation = _data.relations[type].now[a];
-					var ent 	 = _data.instance.models[relation.model].find[relation.on[1]](objects[i][relation.on[0]]);
-
-					if(null !== ent) {
-
-						entity[relation.property[0]].push(ent);
-						ent[relation.property[1]].push(entity);
-					}
-					else {
-
-						if(undefined === _data.relations[relation.model]) {
-							_data.relations[relation.model] = {now : [], later : []};
-						}
-
-						var relation = JSON.parse(JSON.stringify(relation));
-
-						//console.log(objects[i], relation.on[1])
-
-						relation.value = [objects[i][relation.on[1]], entity];
-						_data.relations[relation.model].later.push(relation);
-					}
-				}
-
-				var remove 	 = [];
-
-				for(var a in _data.relations[type].later) {
-
-					var relation = _data.relations[type].later[a];
-					var ent 	 = _data.instance.models[type].find[relation.on[1]](relation.value[0]);
-
-					if(null !== ent) {
-
-						if(entity[relation.on[1]].get() === ent[relation.on[1]].get()) {
-
-							entity[relation.property[1]].push(relation.value[1]);
-							relation.value[1][relation.property[0]].push(entity);
-							remove.push(a);
-						}
-					}
-				}
-
-				for(var a in remove) {
-					_data.relations[type].later.splice(remove[a], 1);
 				}
 			}
 

@@ -1,5 +1,5 @@
 # Nerms
-Nerms; Nodejs Entities, Relationships Models. This module can be used to maintain and easly find entities and their relations. The library uses models to store single entities for easy finding and accessing your data. 
+Nerms; Nodejs Entity, Relationship Models. This module can be used to maintain and easly find entities and their relations. The library uses models to store single entities for easy finding and accessing your data. 
 
 ## Usage
 ##### Installation
@@ -18,7 +18,7 @@ Each entity has it own properties. For example, a User entity can have an id, fi
 var properties = {id : 1, firstname : 'Kris', lastname : 'Kuiper'};
 ```
 
-To store this entity, you first need to create the model. You may create a new Model by simply adding them to Nerms. We will create a User model to store user data:
+To store this entity, you first need to create the model. You may create a new model by simply adding them to Nerms. We will create a User model to store user data:
 ```javascript
 //Create model properties
 var properties = {id : null, firstname : null, lastname : null };
@@ -68,7 +68,7 @@ for(entity in entities) {
 ```
 
 ##### Model find function
-The find function contains every entity attribute, so you may find an entitie by its property. The User entity we created above contains an id, firstname and lastname property. So the find property also contains these three properties:
+The find function contains every entity attribute, so you may find an entity by its property. The User entity we created above contains an id, firstname and lastname property. So the find property also contains these three properties:
 ```javascript
 console.log(Nerms.models.User.find);
 /*
@@ -99,14 +99,14 @@ Nerms.models.User.push(entity)
 If you create an entity it will automatically be pushed to the model. So if you use the above code, you will have two equal User entities.
 
 ##### Model destroy function
-If you want to delete a Model with all its Entities, you may use the "destroy" function for Models. Here, too, applies that all Entities are destroyed within the Model you want to destroy. 
+If you want to delete a model with all its entities, you may use the "destroy" function for models. Here, too, applies that all entities are destroyed within the model you want to destroy. 
 ```
 Nerms.type.destroy('User');
 ```
 
 ## The entity
 ##### Creating entities
-If you creating an entity, it will be automatically be added to the model.
+If you create an entity, it will be automatically be added to the model.
 ```javascript
 //Define user
 var properties = {id : 1, firstname : 'Kris', lastname : 'Kuiper'};
@@ -116,7 +116,7 @@ var entity = new Nerms.entities.User(properties);
 ```
 
 ##### Map entities
-If you have a record set of, for example, multiple users that you want to add as new Entities, you can add them simply by calling the "map" function. The map function expects a single object or an Array of objects:
+If you have a record set of, for example, multiple users that you want to add as new entities, you can add them simply by calling the "map" function. The map function expects a single object or an Array of objects:
 ```javascript
 //Define users
 var users = [
@@ -155,10 +155,18 @@ entity.firstname.set('John');
 console.log(entity.firstname.get()) //Will output: John
 ```
 
+##### View the type of an entity
+Sometimes it's good to know what type of entity it is:
+```javascript
+//Find entity
+var entity = Nerms.models.User.find.firstname('Kris');
+
+console.log(entity.toString()) //Will output: User
+```
 
 ##### Destroy entities
-The "destroy" function will make sure that entities will be deleted in Nerms, so you won't be able to find an Entity in a Model or as a relationship in another Entity.
-You may destroy an Entity by doing so:
+The "destroy" function will make sure that entities will be deleted in Nerms, so you won't be able to find an entity in a model or as a relationship in another entity.
+You may destroy an entity by doing so:
 ```javascript
 //Find the entity you want to destroy
 var entity = Nerms.models.User.find.id(1);
@@ -274,7 +282,7 @@ Nerms.on('destroy', function(entity) {
 ```
 
 ###### \**Important note*\*
-If an entity is expired it will raise the "expire" event, but also the "destroy" event because of the fact that when an Entity is expired, it will also be destroyed. 
+If an entity is expired it will raise the "expire" event, but also the "destroy" event because of the fact that when an entity is expired, it will also be destroyed. 
 
 ##### Off event
 When you no longer want to listen to an specific event, you can use the "off" function:
@@ -298,4 +306,4 @@ console.log(object); //Will ouput: { id: 1, firstname: 'Kris', lastname: 'Kuiper
 ```
 
 ###### \**Important note*\*
-If you pass multiple Entities to the "dump" function, it will return an Array with objects
+If you pass multiple entities to the "dump" function, it will return an Array with objects
